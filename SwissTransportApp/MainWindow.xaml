@@ -15,9 +15,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Label Content="Swiss Transport App" Style="{StaticResource title}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
         <TabControl Grid.Row="2" Grid.ColumnSpan="2" TabStripPlacement="Left">
             <TabItem Header="Verbindungen">
                 <Grid>
@@ -26,7 +27,7 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
-                    <Label Content="Verbindungen" Grid.Row="0"/>
+                    <Label Style="{StaticResource subTitle}" Content="Verbindungen" Grid.Row="0"/>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
@@ -74,7 +75,7 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
-                    <Label Content="Abfahrtstafel" Grid.Row="0"/>
+                    <Label Style="{StaticResource subTitle}" Content="Abfahrtstafel" Grid.Row="0"/>
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*"/>
@@ -108,7 +109,7 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
-                    <Label Content="Stationen" Grid.Row="0"/>
+                    <Label Style="{StaticResource subTitle}" Content="Stationen" Grid.Row="0"/>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
@@ -149,6 +150,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label Content="Swiss Transport App" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
