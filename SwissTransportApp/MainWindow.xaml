@@ -34,25 +34,26 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
-                            <Label Content="Von"/>
-                            <TextBox/>
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="10">
+                            <Label Padding="0" Content="Von"/>
+                            <TextBox x:Name="txtVerbindungenVon"/>
                         </StackPanel>
-                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                            <Label Content="Nach"/>
-                            <TextBox/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="10">
+                            <Label Padding="0" Content="Nach"/>
+                            <TextBox x:Name="txtVerbindungenNach"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                            <DatePicker/>
-                            <TextBox Width="100"/>
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton IsChecked="True" Content="Ab"/>
-                                <RadioButton Content="An"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <DatePicker Name="dateVerbindungenDate" IsTodayHighlighted="True" Margin="5"/>
+                            <Label VerticalAlignment="Center" Content="Zeit"/>
+                            <TextBox x:Name="txtVerbindungenTime" VerticalContentAlignment="Center" Width="50" Margin="5"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <RadioButton x:Name="radioBtnVerbindungenAb" Margin="5" IsChecked="True" Content="Ab"/>
+                                <RadioButton x:Name="radioBtnVerbindungenAn" Margin="5" Content="An"/>
                             </StackPanel>
-                            <Button Content="Verbindung suchen"/>
+                            <Button x:Name="btnVerbindungSuchen" Click="btnVerbindungSuchenClick"  Margin="5" Content="Verbindung suchen"/>
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Row="2">
