@@ -109,6 +109,37 @@ namespace SwissTransportApp
             dataGridVerbindung.ItemsSource = verbindungList;
         }
 
+        private void btnStationSuchenClick(object sender, RoutedEventArgs e)
+        {
+            string station = "";
+            if (txtStation.Text.Length > 0)
+            {
+                station = txtStation.Text;
+            }
+            else
+            {
+                showError("Station ist leer");
+            }
+
+            transportAPI = new Transport();
+            var test = transportAPI.GetStations(station);
+            string stationId = "";
+            foreach (var line in test.StationList)
+            {
+                if (line.Name == station)
+                {
+                    stationId = line.Id;
+                }
+            }
+
+            if (stationId.Length > 0)
+            {
+                var test2 = transportAPI.GetStationBoard(station, stationId);
+                int id = 0;
+            }
+            dataGridVerbindung.ItemsSource = verbindungList;
+        }
+
         private void showError(string message)
         {
             MessageBox.Show(message);

@@ -84,10 +84,10 @@
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
                             <Label Content="Station"/>
-                            <TextBox/>
+                            <TextBox x:Name="txtStation"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
-                            <Button Content="Verbindung suchen"/>
+                            <Button x:Name="btnStationSuchen" Click="btnStationSuchenClick" Content="Suchen"/>
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Row="2">
