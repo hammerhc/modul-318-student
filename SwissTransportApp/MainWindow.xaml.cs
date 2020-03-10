@@ -20,9 +20,25 @@ namespace SwissTransportApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<Verbindungen> verbindungList = new List<Verbindungen>();
         public MainWindow()
         {
             InitializeComponent();
+
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            verbindungList.Add(new Verbindungen { VerbindungId = 1, VerbindungAb = "Luzern, 12:00", VerbindungAn = "Sursee, 13:00", VerbindungDauer = "60 min", VerbindungGleisAb = "Gl.3", VerbindungGleisAn = "Gl.3" });
+            dataGridVerbindung.ItemsSource = verbindungList;
         }
     }
 }
