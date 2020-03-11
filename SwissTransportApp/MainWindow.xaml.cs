@@ -32,21 +32,10 @@ namespace SwissTransportApp
             txtVerbindungenDate.Text = DateTime.Now.ToString();
         }
 
-        private void TabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var tc = sender as TabControl;
-            if (tc != null)
-            {
-                TabItem item = (TabItem)tc.SelectedItem;
-                if (item.Content.ToString() == "Verbindungen")
-                {
-                    txtVerbindungenDate.Text = DateTime.Now.ToString();
-                }
-            }
-        }
-
         private void btnVerbindungSuchenClick(object sender, RoutedEventArgs e)
         {
+            dataGridVerbindung.ItemsSource = null;
+            verbindungList.Clear();
             string verbindungenVon = "";
             string verbindungenNach = "";
             DateTime? verbindungenDatum = DateTime.Now;
@@ -89,6 +78,8 @@ namespace SwissTransportApp
 
         private void btnAbfahrtstafelSuchenClick(object sender, RoutedEventArgs e)
         {
+            dataGridAbfahrtstafel.ItemsSource = null;
+            abfahrtstafelList.Clear();
             string station = "";
             if (cmbStation.Text.Length > 0)
             {
@@ -124,6 +115,8 @@ namespace SwissTransportApp
 
         private void btnStationenSuchenClick(object sender, RoutedEventArgs e)
         {
+            dataGridStationen.ItemsSource = null;
+            stationenList.Clear();
             string station = "";
             if (txtStationen.Text.Length > 0)
             {
@@ -159,16 +152,35 @@ namespace SwissTransportApp
 
         private void btnLocationClick(object sender, RoutedEventArgs e)
         {
+            dataGridStationen.ItemsSource = null;
+            stationenList.Clear();
             GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
 
             // Do not suppress prompt, and wait 1000 milliseconds to start.
-            watcher.TryStart(false, TimeSpan.FromMilliseconds(1000));
+            watcher.TryStart(false, TimeSpan.FromMilliseconds(4000));
 
             GeoCoordinate coord = watcher.Position.Location;
             if (coord.IsUnknown != true)
             {
-                MessageBox.Show(coord.Latitude.ToString());
-                MessageBox.Show(coord.Longitude.ToString());
+                string coordX = coord.Latitude.ToString().Replace(",", ".");
+                string coordY = coord.Longitude.ToString().Replace(",", ".");
+                txtStationen.Text = coord.Latitude + ", " + coord.Longitude;
+                transportAPI = new Transport();
+                var test = transportAPI.GetStationsByCoordinates(coordX, coordY);
+                int id = 0;
+                foreach (var line in test.StationList)
+                {
+                    if (line.Icon == "train")
+                    {
+                        line.Icon = "Zug";
+                    }
+                    else if (line.Icon == "bus")
+                    {
+                        line.Icon = "Bus";
+                    }
+                    stationenList.Add(new Stationen { StationenId = id, StationenName = line.Name, StationenTyp = line.Icon, StationenMapURL = "https://www.google.com/maps/place/" + line.Coordinate.XCoordinate.ToString().Replace(",",".") + "+" + line.Coordinate.YCoordinate.ToString().Replace(",", ".") });
+                }
+                dataGridStationen.ItemsSource = stationenList;
             }
             else
             {
@@ -215,7 +227,8 @@ namespace SwissTransportApp
         {
             if (verbindungList.Count > 0)
             {
-
+                MailExport mailExport = new MailExport();
+                mailExport.ShowDialog();
             }
             else
             {

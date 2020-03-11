@@ -24,6 +24,25 @@ namespace SwissTransport
             return null;
         }
 
+        public Stations GetStationsByCoordinates(string xCoord, string yCoord)
+        {
+            xCoord = System.Uri.EscapeDataString(xCoord);
+            yCoord = System.Uri.EscapeDataString(yCoord);
+            var request = CreateWebRequest("http://transport.opendata.ch/v1/locations?x=" + xCoord + "&y=" + yCoord);
+            var response = request.GetResponse();
+            var responseStream = response.GetResponseStream();
+
+            if (responseStream != null)
+            {
+                var message = new StreamReader(responseStream).ReadToEnd();
+                var stations = JsonConvert.DeserializeObject<Stations>(message
+                    , new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                return stations;
+            }
+
+            return null;
+        }
+
         public StationBoardRoot GetStationBoard(string station, string id)
         {
             station = System.Uri.EscapeDataString(station);
