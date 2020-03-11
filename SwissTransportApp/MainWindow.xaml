@@ -79,16 +79,16 @@
                     <Label Style="{StaticResource subTitle}" Content="Abfahrtstafel" Grid.Row="0"/>
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                            <Label Content="Station"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="10">
+                            <Label Padding="0" Content="Station"/>
                             <TextBox x:Name="txtStation"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
-                            <Button x:Name="btnStationSuchen" Click="btnStationSuchenClick" Content="Suchen"/>
-                        </StackPanel>
+                        <DockPanel Grid.Column="0" Grid.Row="1" Margin="10">
+                            <Button x:Name="btnAbfahrtstafelSuchen" Click="btnAbfahrtstafelSuchenClick" Content="Suchen"/>
+                        </DockPanel>
                     </Grid>
                     <Grid Grid.Row="2">
                         <DataGrid x:Name="dataGridAbfahrtstafel" IsReadOnly="True" AutoGenerateColumns="False">

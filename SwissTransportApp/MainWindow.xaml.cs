@@ -95,7 +95,7 @@ namespace SwissTransportApp
             dataGridVerbindung.ItemsSource = verbindungList;
         }
 
-        private void btnStationSuchenClick(object sender, RoutedEventArgs e)
+        private void btnAbfahrtstafelSuchenClick(object sender, RoutedEventArgs e)
         {
             string station = "";
             if (txtStation.Text.Length > 0)
