@@ -31,6 +31,9 @@ namespace SwissTransport
 
         [JsonProperty("distance")]
         public double? Distance { get; set; }
+
+        [JsonProperty("icon")]
+        public string Icon { get; set; }
     }
 
     public class Stations

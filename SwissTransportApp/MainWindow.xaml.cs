@@ -1,6 +1,7 @@
 ﻿using SwissTransport;
 using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,17 +29,6 @@ namespace SwissTransportApp
         public MainWindow()
         {
             InitializeComponent();
-
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
-            dataGridStationen.ItemsSource = stationenList;
         }
 
         private void btnVerbindungSuchenClick(object sender, RoutedEventArgs e)
@@ -128,6 +118,60 @@ namespace SwissTransportApp
                 }
             }
             dataGridAbfahrtstafel.ItemsSource = abfahrtstafelList;
+        }
+
+        private void btnStationenSuchenClick(object sender, RoutedEventArgs e)
+        {
+            string station = "";
+            if (txtStationen.Text.Length > 0)
+            {
+                station = txtStationen.Text;
+            } else
+            {
+                showError("Station ist leer");
+            }
+
+            transportAPI = new Transport();
+            var test = transportAPI.GetStations(station);
+            int id = 0;
+            foreach (var line in test.StationList)
+            {
+                if (line.Icon == "train")
+                {
+                    line.Icon = "Zug";
+                }
+                else if (line.Icon == "bus")
+                {
+                    line.Icon = "Bus";
+                }
+                stationenList.Add(new Stationen { StationenId = id, StationenName = line.Name, StationenTyp = line.Icon, StationenMapURL = "https://www.google.com/maps/place/" + line.Coordinate.XCoordinate + "+" + line.Coordinate.YCoordinate});
+            }
+            dataGridStationen.ItemsSource = stationenList;
+        }
+
+        private void btnMapOpenClick(object sender, RoutedEventArgs e)
+        {
+            object URL = ((Button)sender).CommandParameter;
+            System.Diagnostics.Process.Start(URL.ToString());
+        }
+
+        private void btnLocationClick(object sender, RoutedEventArgs e)
+        {
+            GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
+
+            // Do not suppress prompt, and wait 1000 milliseconds to start.
+            watcher.TryStart(false, TimeSpan.FromMilliseconds(1000));
+
+            GeoCoordinate coord = watcher.Position.Location;
+            if (coord.IsUnknown != true)
+            {
+                MessageBox.Show(coord.Latitude.ToString());
+                MessageBox.Show(coord.Longitude.ToString());
+            }
+            else
+            {
+                MessageBox.Show("Position konnte nicht ermittelt werden");
+            }
         }
 
         private void showError(string message)

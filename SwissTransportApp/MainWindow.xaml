@@ -120,26 +120,24 @@
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="10">
                             <Label Padding="0" Content="Station"/>
-                            <TextBox/>
+                            <TextBox x:Name="txtStationen"/>
                         </StackPanel>
                         <DockPanel Grid.Row="1" Grid.Column="0" Margin="10">
-                            <Button Content="In meiner Nähe"/>
+                            <Button x:Name="btnLocation" Click="btnLocationClick" Content="In meiner Nähe"/>
                         </DockPanel>
                         <DockPanel Grid.Row="1" Grid.Column="2" Margin="10">
-                            <Button Content="Suchen"/>
+                            <Button x:Name="btnStationenSuchen" Click="btnStationenSuchenClick" Content="Suchen"/>
                         </DockPanel>
                     </Grid>
                     <Grid Grid.Row="2">
                         <DataGrid x:Name="dataGridStationen" IsReadOnly="True" AutoGenerateColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding StationenName}" Width="2*" Header="Name"/>
-                                <DataGridTextColumn Binding="{Binding StationenOrt}" Width="2*" Header="Ort"/>
                                 <DataGridTextColumn Binding="{Binding StationenTyp}" Width="2*" Header="Typ"/>
-                                <DataGridTextColumn Binding="{Binding StationenEntfernung}" Width="1*" Header="Entfernung"/>
-                                <DataGridTemplateColumn Width="2*" Header="Map">
+                                <DataGridTemplateColumn Width="1*" Header="Map">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Map öffnen"/>
+                                            <Button Click="btnMapOpenClick" CommandParameter="{Binding StationenMapURL}" Padding="-10" Content="Map öffnen"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
