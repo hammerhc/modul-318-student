@@ -36,40 +36,28 @@ namespace SwissTransportApp
             string verbindungenVon = "";
             string verbindungenNach = "";
             DateTime? verbindungenDatum = DateTime.Now;
-            dateVerbindungenDate.SelectedDate = verbindungenDatum;
+            txtVerbindungenDate.Text = verbindungenDatum.ToString();
             string verbindungenZeit = DateTime.Now.ToString();
-            txtVerbindungenTime.Text = verbindungenZeit;
 
-            if (txtVerbindungenVon.Text.Length > 0)
+            if (cmbVerbindungenVon.Text.Length > 0)
             {
-                verbindungenVon = txtVerbindungenVon.Text;
+                verbindungenVon = cmbVerbindungenVon.Text;
             } 
             else
             {
                 showError("Von ist leer");
             }
-            if (txtVerbindungenNach.Text.Length > 0)
+            if (cmbVerbindungenNach.Text.Length > 0)
             {
-                verbindungenNach = txtVerbindungenNach.Text;
+                verbindungenNach = cmbVerbindungenNach.Text;
             }
             else
             {
                 showError("Nach ist leer");
             }
-            if (dateVerbindungenDate.SelectedDate >= DateTime.Now)
+            if (!txtVerbindungenDate.Value.HasValue)
             {
-                verbindungenDatum = dateVerbindungenDate.SelectedDate;
-            }
-            else
-            {
-                showError("Datum ist leer oder kleiner");
-            }
-            if (txtVerbindungenTime.Text.Length > 0)
-            {
-                verbindungenZeit = txtVerbindungenTime.Text;
-            } else
-            {
-                showError("Zeit ist leer");
+                showError("Date ist leer");
             }
             bool? verbindungenAb = radioBtnVerbindungenAb.IsChecked;
             bool? verbindungenAn = radioBtnVerbindungenAn.IsChecked;
@@ -88,9 +76,9 @@ namespace SwissTransportApp
         private void btnAbfahrtstafelSuchenClick(object sender, RoutedEventArgs e)
         {
             string station = "";
-            if (txtStation.Text.Length > 0)
+            if (cmbStation.Text.Length > 0)
             {
-                station = txtStation.Text;
+                station = cmbStation.Text;
             }
             else
             {
@@ -172,6 +160,41 @@ namespace SwissTransportApp
             {
                 MessageBox.Show("Position konnte nicht ermittelt werden");
             }
+        }
+
+        private void cmbAutoSelect(ComboBox combobox)
+        {
+            if (combobox.Text.Length == 3)
+            {
+                string input = combobox.Text;
+                combobox.Items.Clear();
+                combobox.Text = input;
+                transportAPI = new Transport();
+                var test = transportAPI.GetStations(combobox.Text);
+                foreach (var line in test.StationList)
+                {
+                    if (line.Id != null)
+                    {
+                        combobox.Items.Add(line.Name);
+                    }
+                }
+                var myTextBox = (combobox.Template.FindName("PART_EditableTextBox", combobox) as TextBox);
+                if (myTextBox != null)
+                {
+                    myTextBox.Focus();
+                    myTextBox.SelectionStart = myTextBox.Text.Length;
+                }
+            }
+
+            if (combobox.Text.Length > 0)
+            {
+                combobox.IsDropDownOpen = true;
+            }
+        }
+
+        private void cmbAutoSelectTextChanged(object sender, TextChangedEventArgs e)
+        {
+            cmbAutoSelect((ComboBox)sender);
         }
 
         private void showError(string message)

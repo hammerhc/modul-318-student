@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SwissTransportApp"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:system="clr-namespace:System;assembly=System"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
@@ -19,7 +21,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Content="Swiss Transport App" Style="{StaticResource title}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
-        <TabControl Grid.Row="2" Grid.ColumnSpan="2" TabStripPlacement="Left">
+        <TabControl Grid.Row="1" Grid.ColumnSpan="2" TabStripPlacement="Left">
             <TabItem Header="Verbindungen">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -38,22 +40,23 @@
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="10">
-                            <Label Padding="0" Content="Von"/>
-                            <TextBox x:Name="txtVerbindungenVon"/>
+                            <Label Padding="0" Content="Von:" Margin="0,0,0,2"/>
+                            <ComboBox x:Name="cmbVerbindungenVon" IsEditable="True" TextBoxBase.TextChanged="cmbAutoSelectTextChanged"/>
                         </StackPanel>
                         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="10">
-                            <Label Padding="0" Content="Nach"/>
-                            <TextBox x:Name="txtVerbindungenNach"/>
+                            <Label Padding="0" Content="Nach:" Margin="0,0,0,2"/>
+                            <ComboBox x:Name="cmbVerbindungenNach" IsEditable="True" TextBoxBase.TextChanged="cmbAutoSelectTextChanged"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                            <DatePicker Name="dateVerbindungenDate" IsTodayHighlighted="True" Margin="5"/>
-                            <Label VerticalAlignment="Center" Content="Zeit"/>
-                            <TextBox x:Name="txtVerbindungenTime" VerticalContentAlignment="Center" Width="50" Margin="5"/>
+                        <DockPanel Grid.Column="0" Grid.Row="1" Margin="10">
+                            <xctk:DateTimePicker x:Name="txtVerbindungenDate" Format="FullDateTime"/>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="10">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <RadioButton x:Name="radioBtnVerbindungenAb" Margin="5" IsChecked="True" Content="Ab"/>
-                                <RadioButton x:Name="radioBtnVerbindungenAn" Margin="5" Content="An"/>
+                                <RadioButton x:Name="radioBtnVerbindungenAb" Margin="0,0,5,0" IsChecked="True" Content="Ab"/>
+                                <RadioButton x:Name="radioBtnVerbindungenAn" Margin="5,0,5,0" Content="An"/>
                             </StackPanel>
-                            <Button x:Name="btnVerbindungSuchen" Click="btnVerbindungSuchenClick"  Margin="5" Content="Verbindung suchen"/>
+                            <Button x:Name="btnVerbindungSuchen" Click="btnVerbindungSuchenClick" Content="Verbindung suchen" Margin="5,0,5,0"/>
+                            <Button x:Name="btnExportMail" Click="btnExportMailClick" Content="Mail-Export" Margin="5,0,5,0"/>
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Row="2">
@@ -83,8 +86,8 @@
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="10">
-                            <Label Padding="0" Content="Station"/>
-                            <TextBox x:Name="txtStation"/>
+                            <Label Padding="0" Content="Station:" Margin="0,0,0,2"/>
+                            <ComboBox x:Name="cmbStation" IsEditable="True" TextBoxBase.TextChanged="cmbAutoSelectTextChanged"/>
                         </StackPanel>
                         <DockPanel Grid.Column="0" Grid.Row="1" Margin="10">
                             <Button x:Name="btnAbfahrtstafelSuchen" Click="btnAbfahrtstafelSuchenClick" Content="Suchen"/>
@@ -119,7 +122,7 @@
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="10">
-                            <Label Padding="0" Content="Station"/>
+                            <Label Padding="0" Content="Station:" Margin="0,0,0,2"/>
                             <TextBox x:Name="txtStationen"/>
                         </StackPanel>
                         <DockPanel Grid.Row="1" Grid.Column="0" Margin="10">
