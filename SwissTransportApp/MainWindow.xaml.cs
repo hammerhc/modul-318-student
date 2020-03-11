@@ -29,20 +29,6 @@ namespace SwissTransportApp
         {
             InitializeComponent();
 
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = 1, AbfahrtstafelAb = "Luzern, 12:00", AbfahrtstafelAn = "Sursee, 13:00", AbfahrtstafelDauer = "60 min", AbfahrtstafelGleisAb = "Gl.3", AbfahrtstafelGleisAn = "Gl.3" });
-            dataGridAbfahrtstafel.ItemsSource = abfahrtstafelList;
-
             stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
             stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
             stationenList.Add(new Stationen { StationenId = 1, StationenName = "Bahnhof Sursee", StationenOrt = "Sursee", StationenTyp = "Bahnhof", StationenEntfernung = "10km", StationenMapX = "34324345", StationenMapY = "3453134213", StationenMapURL = "www.google.ch/maps" });
@@ -136,8 +122,12 @@ namespace SwissTransportApp
             {
                 var test2 = transportAPI.GetStationBoard(station, stationId);
                 int id = 0;
+                foreach (var line in test2.Entries)
+                {
+                    abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = id, AbfahrtstafelAbfahrt = line.Stop.Departure.ToString(), AbfahrtstafelNach = line.To, AbfahrtstafelTyp = line.Name});
+                }
             }
-            dataGridVerbindung.ItemsSource = verbindungList;
+            dataGridAbfahrtstafel.ItemsSource = abfahrtstafelList;
         }
 
         private void showError(string message)
