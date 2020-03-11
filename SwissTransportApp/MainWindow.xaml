@@ -21,7 +21,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Content="Swiss Transport App" Style="{StaticResource title}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
-        <TabControl Grid.Row="1" Grid.ColumnSpan="2" TabStripPlacement="Left">
+        <TabControl Grid.Row="1" Grid.ColumnSpan="2" TabStripPlacement="Left" SelectionChanged="TabControlSelectionChanged">
             <TabItem Header="Verbindungen">
                 <Grid>
                     <Grid.RowDefinitions>

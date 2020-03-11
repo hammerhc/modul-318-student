@@ -29,6 +29,20 @@ namespace SwissTransportApp
         public MainWindow()
         {
             InitializeComponent();
+            txtVerbindungenDate.Text = DateTime.Now.ToString();
+        }
+
+        private void TabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tc = sender as TabControl;
+            if (tc != null)
+            {
+                TabItem item = (TabItem)tc.SelectedItem;
+                if (item.Content.ToString() == "Verbindungen")
+                {
+                    txtVerbindungenDate.Text = DateTime.Now.ToString();
+                }
+            }
         }
 
         private void btnVerbindungSuchenClick(object sender, RoutedEventArgs e)
@@ -195,6 +209,18 @@ namespace SwissTransportApp
         private void cmbAutoSelectTextChanged(object sender, TextChangedEventArgs e)
         {
             cmbAutoSelect((ComboBox)sender);
+        }
+
+        private void btnExportMailClick(object sender, RoutedEventArgs e)
+        {
+            if (verbindungList.Count > 0)
+            {
+
+            }
+            else
+            {
+                showError("Es sind keine Verbindungen vorhanden");
+            }
         }
 
         private void showError(string message)
