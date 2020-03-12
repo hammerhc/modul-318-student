@@ -1,6 +1,7 @@
 # SwissTransportApp by Simon Krieger
 
 Die Dokumentation befindet sich im Ordner /Doc
+
 Die Installations-Datei befindet sich im Ordner /Setup
 
 Installations-Anleitung
