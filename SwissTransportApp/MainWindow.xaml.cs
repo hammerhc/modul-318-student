@@ -2,18 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Device.Location;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SwissTransportApp
 {
@@ -22,35 +12,49 @@ namespace SwissTransportApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<Verbindungen> verbindungList = new List<Verbindungen>();
+        /// <summary>
+        /// Lists for each DataGrid
+        /// </summary>
+        private List<Verbindungen> verbindungenList = new List<Verbindungen>();
         private List<Abfahrtstafel> abfahrtstafelList = new List<Abfahrtstafel>();
         private List<Stationen> stationenList = new List<Stationen>();
+
+        /// <summary>
+        /// Transport object
+        /// </summary>
         private ITransport transportAPI;
 
+        /// <summary>
+        /// Initialize MainWindow
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
             txtVerbindungenDate.Text = DateTime.Now.ToString();
         }
 
-        private void btnVerbindungSuchenClick(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Function for getting the connection data
+        /// </summary>
+        private void getConnection()
         {
-            dataGridVerbindung.ItemsSource = null;
-            verbindungList.Clear();
+            /// Define variables
             string verbindungenVon = "";
             string verbindungenNach = "";
             bool verbindungenType = false;
-            DateTime? verbindungenDatum = DateTime.Now;
-            txtVerbindungenDate.Text = verbindungenDatum.ToString();
-            string verbindungenZeit = DateTime.Now.ToString();
+            txtVerbindungenDate.Text = DateTime.Now.ToString();
 
+            /// Initialize Object from Transport Class
+            transportAPI = new Transport();
+
+            /// Check Controls
             if (cmbVerbindungenVon.Text.Length > 0)
             {
                 verbindungenVon = cmbVerbindungenVon.Text;
-            } 
+            }
             else
             {
-                showError("Von ist leer");
+                showError("Bitte Startstation eingeben.");
             }
             if (cmbVerbindungenNach.Text.Length > 0)
             {
@@ -58,20 +62,22 @@ namespace SwissTransportApp
             }
             else
             {
-                showError("Nach ist leer");
+                showError("Bitte Endstation eingeben.");
             }
             if (!txtVerbindungenDate.Value.HasValue)
             {
-                showError("Date ist leer");
+                showError("Bitte Datum und Uhrzeit auswählen.");
             }
-            bool? verbindungenAb = radioBtnVerbindungenAb.IsChecked;
-            bool? verbindungenAn = radioBtnVerbindungenAn.IsChecked;
-            if (verbindungenAn.Value)
+            if (radioBtnVerbindungenAb.IsChecked.Value)
+            {
+                verbindungenType = false;
+            }
+            if (radioBtnVerbindungenAn.IsChecked.Value)
             {
                 verbindungenType = true;
             }
 
-            transportAPI = new Transport();
+            /// Getting the data from the Api
             try
             {
                 var date = Convert.ToDateTime(txtVerbindungenDate.Text);
@@ -79,63 +85,59 @@ namespace SwissTransportApp
                 var month = date.Month;
                 var day = date.Day;
                 var time = date.TimeOfDay;
-                var testDate = year + "-" + month + "-" + day;
-                var test = transportAPI.GetConnectionsByTime(verbindungenVon, verbindungenNach, testDate, time.ToString(), verbindungenType);
+                var apiDate = year + "-" + month + "-" + day;
+                var connectionResult = transportAPI.GetConnectionsByTime(verbindungenVon, verbindungenNach, apiDate, time.ToString(), verbindungenType);
                 int id = 0;
                 string verbindungAn = "";
                 string verbindungAb = "";
                 DateTime dateTimeFrom;
                 DateTime dateTimeTo;
-                foreach (var line in test.ConnectionList)
+                foreach (var line in connectionResult.ConnectionList)
                 {
                     dateTimeFrom = UnixTimeStampToDateTime(Convert.ToDouble(line.From.DepartureTimestamp));
                     dateTimeTo = UnixTimeStampToDateTime(Convert.ToDouble(line.To.ArrivalTimestamp));
                     verbindungAb = line.From.Station.Name + ", " + dateTimeFrom.ToString();
                     verbindungAn = line.To.Station.Name + ", " + dateTimeTo.ToString();
-                    verbindungList.Add(new Verbindungen { VerbindungId = id, VerbindungAb = verbindungAb, VerbindungAn = verbindungAn, VerbindungDauer = line.Duration, VerbindungGleisAb = line.From.Platform, VerbindungGleisAn = line.To.Platform });
+                    verbindungenList.Add(new Verbindungen { VerbindungId = id, VerbindungAb = verbindungAb, VerbindungAn = verbindungAn, VerbindungDauer = line.Duration, VerbindungGleisAb = line.From.Platform, VerbindungGleisAn = line.To.Platform });
                     id++;
                 }
-                dataGridVerbindung.ItemsSource = verbindungList;
+                dataGridVerbindung.ItemsSource = verbindungenList;
             }
             catch
             {
-                showError("Fehler bei der Abfrage der Verbindungen");
+                showError("Fehler bei der Abfrage der Daten, stellen Sie sicher, dass Sie eine aktive Internetverbindung haben und ihre Angaben korrekt sind.");
             }
-
         }
 
-        private void btnAbfahrtstafelSuchenClick(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Function for getting the stationBoard data
+        /// </summary>
+        private void getStationBoard()
         {
-            dataGridAbfahrtstafel.ItemsSource = null;
-            abfahrtstafelList.Clear();
+            /// Define variables
             string station = "";
+            string stationId = "";
+            transportAPI = new Transport();
+
+            /// Check controls
             if (cmbStation.Text.Length > 0)
             {
                 station = cmbStation.Text;
             }
             else
             {
-                showError("Station ist leer");
+                showError("Bitte Station eingeben.");
             }
 
-            transportAPI = new Transport();
+            stationId = getStationId(station);
+
             try
             {
-                var test = transportAPI.GetStations(station);
-                string stationId = "";
-                foreach (var line in test.StationList)
-                {
-                    if (line.Name == station)
-                    {
-                        stationId = line.Id;
-                    }
-                }
-
                 if (stationId.Length > 0)
                 {
-                    var test2 = transportAPI.GetStationBoard(station, stationId);
+                    var stationBoardResult = transportAPI.GetStationBoard(station, stationId);
                     int id = 0;
-                    foreach (var line in test2.Entries)
+                    foreach (var line in stationBoardResult.Entries)
                     {
                         abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = id, AbfahrtstafelAbfahrt = line.Stop.Departure.ToString(), AbfahrtstafelNach = line.To, AbfahrtstafelTyp = line.Name });
                     }
@@ -144,24 +146,55 @@ namespace SwissTransportApp
             }
             catch
             {
-                showError("Fehler bei der Abfrage der Abfahrtstabelle");
+                showError("Fehler bei der Abfrage der Daten, stellen Sie sicher, dass Sie eine aktive Internetverbindung haben und ihre Angaben korrekt sind.");
+            }
+
+        }
+
+        /// <summary>
+        /// Function for getting the station id
+        /// </summary>
+        private string getStationId(string station)
+        {
+            string stationId = "";
+            try
+            {
+                var stationBoardResult = transportAPI.GetStations(station);
+                foreach (var line in stationBoardResult.StationList)
+                {
+                    if (line.Name == station)
+                    {
+                        stationId = line.Id;
+                    }
+                }
+                return stationId;
+            }
+            catch
+            {
+                showError("Fehler bei der Abfrage der Daten, stellen Sie sicher, dass Sie eine aktive Internetverbindung haben und ihre Angaben korrekt sind.");
+                return stationId;
             }
         }
 
-        private void btnStationenSuchenClick(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Function for getting the stations
+        /// </summary>
+        private void getStations()
         {
-            dataGridStationen.ItemsSource = null;
-            stationenList.Clear();
+            /// Define variables
             string station = "";
+            transportAPI = new Transport();
+
+            /// Check Controls
             if (txtStationen.Text.Length > 0)
             {
                 station = txtStationen.Text;
-            } else
+            }
+            else
             {
-                showError("Station ist leer");
+                showError("Bitte Station eingeben.");
             }
 
-            transportAPI = new Transport();
             try
             {
                 var test = transportAPI.GetStations(station);
@@ -182,11 +215,102 @@ namespace SwissTransportApp
             }
             catch
             {
-                showError("Fehler bei der Stationsabfrage");
+                showError("Fehler bei der Abfrage der Daten, stellen Sie sicher, dass Sie eine aktive Internetverbindung haben und ihre Angaben korrekt sind.");
+            }
+        }
+
+        /// <summary>
+        /// Function for getting the stations by coordinate
+        /// </summary>
+        private void getStationsByCoordinate ()
+        {
+            /// Define variables 
+            string coordX = "";
+            string coordY = "";
+            transportAPI = new Transport();
+
+            /// Initialize object GeoCoordinateWatcher
+            GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
+
+            watcher.TryStart(false, TimeSpan.FromMilliseconds(4000));
+
+            GeoCoordinate coord = watcher.Position.Location;
+            if (coord.IsUnknown != true)
+            {
+                coordX = coord.Latitude.ToString().Replace(",", ".");
+                coordY = coord.Longitude.ToString().Replace(",", ".");
+
+                try
+                {
+                    var stationsResult = transportAPI.GetStationsByCoordinates(coordX, coordY);
+                    int id = 0;
+                    foreach (var line in stationsResult.StationList)
+                    {
+                        if (line.Icon == "train")
+                        {
+                            line.Icon = "Zug";
+                        }
+                        else if (line.Icon == "bus")
+                        {
+                            line.Icon = "Bus";
+                        }
+                        stationenList.Add(new Stationen { StationenId = id, StationenName = line.Name, StationenTyp = line.Icon, StationenMapURL = "https://www.google.com/maps/place/" + line.Coordinate.XCoordinate.ToString().Replace(",", ".") + "+" + line.Coordinate.YCoordinate.ToString().Replace(",", ".") });
+                    }
+                    dataGridStationen.ItemsSource = stationenList;
+                }
+                catch
+                {
+                    showError("Fehler bei der Abfrage der Daten, stellen Sie sicher, dass Sie eine aktive Internetverbindung haben und ihre Angaben korrekt sind.");
+                }
+            }
+            else
+            {
+               showError("Ihre Position konnte nicht ermittelt werden, stellen Sie sicher, dass Sie GPS auf Ihrem Computer aktiviert haben.");
             }
 
         }
 
+        /// <summary>
+        /// Button connection search click event handler
+        /// </summary>
+        private void btnVerbindungSuchenClick(object sender, RoutedEventArgs e)
+        {
+            /// Clear DataGrid 
+            dataGridVerbindung.ItemsSource = null;
+            verbindungenList.Clear();
+
+            /// Get Connection data from Api function
+            getConnection();
+        }
+
+        /// <summary>
+        /// Button stationBoard search click event handler
+        /// </summary>
+        private void btnAbfahrtstafelSuchenClick(object sender, RoutedEventArgs e)
+        {
+            /// Clear DataGrid 
+            dataGridAbfahrtstafel.ItemsSource = null;
+            abfahrtstafelList.Clear();
+
+            /// Get Stationboard data from Api function
+            getStationBoard();
+        }
+
+        /// <summary>
+        /// Button stations search click event handler
+        /// </summary>
+        private void btnStationenSuchenClick(object sender, RoutedEventArgs e)
+        {
+            dataGridStationen.ItemsSource = null;
+            stationenList.Clear();
+
+            /// Get stations data from Api function
+            getStations();
+        }
+
+        /// <summary>
+        /// Button map open click event handler
+        /// </summary>
         private void btnMapOpenClick(object sender, RoutedEventArgs e)
         {
             try
@@ -196,104 +320,93 @@ namespace SwissTransportApp
             }
             catch
             {
-                showError("Map konnte nicht geöffnet werden");
+                showError("Google Maps konnte nicht geöffnet werden.");
             }
 
         }
 
+        /// <summary>
+        /// Button location click event handler
+        /// </summary>
         private void btnLocationClick(object sender, RoutedEventArgs e)
         {
             dataGridStationen.ItemsSource = null;
             stationenList.Clear();
-            GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
 
-            // Do not suppress prompt, and wait 1000 milliseconds to start.
-            watcher.TryStart(false, TimeSpan.FromMilliseconds(4000));
-
-            GeoCoordinate coord = watcher.Position.Location;
-            if (coord.IsUnknown != true)
-            {
-                string coordX = coord.Latitude.ToString().Replace(",", ".");
-                string coordY = coord.Longitude.ToString().Replace(",", ".");
-                txtStationen.Text = coord.Latitude + ", " + coord.Longitude;
-                transportAPI = new Transport();
-                var test = transportAPI.GetStationsByCoordinates(coordX, coordY);
-                int id = 0;
-                foreach (var line in test.StationList)
-                {
-                    if (line.Icon == "train")
-                    {
-                        line.Icon = "Zug";
-                    }
-                    else if (line.Icon == "bus")
-                    {
-                        line.Icon = "Bus";
-                    }
-                    stationenList.Add(new Stationen { StationenId = id, StationenName = line.Name, StationenTyp = line.Icon, StationenMapURL = "https://www.google.com/maps/place/" + line.Coordinate.XCoordinate.ToString().Replace(",",".") + "+" + line.Coordinate.YCoordinate.ToString().Replace(",", ".") });
-                }
-                dataGridStationen.ItemsSource = stationenList;
-            }
-            else
-            {
-                MessageBox.Show("Position konnte nicht ermittelt werden");
-            }
+            /// Get stations data by coordinate from Api function
+            getStationsByCoordinate();
         }
 
+        /// <summary>
+        /// Autoselect function for the combobox
+        /// </summary>
         private void cmbAutoSelect(ComboBox combobox)
         {
-            if (combobox.Text.Length == 3)
+            if (combobox.Text.Length > 2 && combobox.Text.Length < 5)
             {
-                string input = combobox.Text;
                 combobox.Items.Clear();
-                combobox.Text = input;
                 transportAPI = new Transport();
                 try
                 {
-                    var test = transportAPI.GetStations(combobox.Text);
-                    foreach (var line in test.StationList)
+                    var stationsResult = transportAPI.GetStations(combobox.Text);
+                    foreach (var line in stationsResult.StationList)
                     {
                         if (line.Id != null)
                         {
                             combobox.Items.Add(line.Name);
                         }
                     }
-                    var myTextBox = (combobox.Template.FindName("PART_EditableTextBox", combobox) as TextBox);
-                    if (myTextBox != null)
-                    {
-                        myTextBox.Focus();
-                        myTextBox.SelectionStart = myTextBox.Text.Length;
-                    }
                 }
                 catch
                 {
-                    showError("Fehler bei der Stationsabfrage");
+                    showError("Fehler bei der Abfrage der Daten, stellen Sie sicher, dass Sie eine aktive Internetverbindung haben und ihre Angaben korrekt sind.");
                 }
             }
 
-            if (combobox.Text.Length > 0)
+            if (combobox.Text.Length < 3)
+            {
+                combobox.IsDropDownOpen = false;
+            }
+
+            if (combobox.Text.Length >= 3)
             {
                 combobox.IsDropDownOpen = true;
+                var myTextBox = (combobox.Template.FindName("PART_EditableTextBox", combobox) as TextBox);
+                if (myTextBox != null)
+                {
+                    myTextBox.Focus();
+                    myTextBox.Select(myTextBox.Text.Length, 0);
+                }
             }
         }
 
+        /// <summary>
+        /// Combobox text changed event handler
+        /// </summary>
         private void cmbAutoSelectTextChanged(object sender, TextChangedEventArgs e)
         {
             cmbAutoSelect((ComboBox)sender);
         }
 
+        /// <summary>
+        /// Button export mail click event handler
+        /// </summary>
         private void btnExportMailClick(object sender, RoutedEventArgs e)
         {
-            if (verbindungList.Count > 0)
+            if (verbindungenList.Count > 0)
             {
-                MailExport mailExport = new MailExport(verbindungList);
+                MailExport mailExport = new MailExport(verbindungenList);
                 mailExport.ShowDialog();
             }
             else
             {
-                showError("Es sind keine Verbindungen vorhanden");
+                showError("Bitte suchen Sie zuerst nach einer Verbindung bevor Sie E-Mails versenden.");
             }
         }
 
+        /// <summary>
+        /// Function for converting unix timestamp to date time
+        /// </summary>
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -301,6 +414,9 @@ namespace SwissTransportApp
             return dtDateTime;
         }
 
+        /// <summary>
+        /// Function for show errors
+        /// </summary>
         private void showError(string message)
         {
             MessageBox.Show(message);
