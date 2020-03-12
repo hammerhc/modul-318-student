@@ -22,10 +22,11 @@ namespace SwissTransportApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Verbindungen> verbindungList = new List<Verbindungen>();
-        List<Abfahrtstafel> abfahrtstafelList = new List<Abfahrtstafel>();
-        List<Stationen> stationenList = new List<Stationen>();
+        private List<Verbindungen> verbindungList = new List<Verbindungen>();
+        private List<Abfahrtstafel> abfahrtstafelList = new List<Abfahrtstafel>();
+        private List<Stationen> stationenList = new List<Stationen>();
         private ITransport transportAPI;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -227,7 +228,7 @@ namespace SwissTransportApp
         {
             if (verbindungList.Count > 0)
             {
-                MailExport mailExport = new MailExport();
+                MailExport mailExport = new MailExport(verbindungList);
                 mailExport.ShowDialog();
             }
             else

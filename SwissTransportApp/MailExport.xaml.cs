@@ -23,9 +23,22 @@ namespace SwissTransportApp
     public partial class MailExport : Window
     {
 
-        public MailExport()
+        public MailExport(List<Verbindungen> verbindugenList)
         {
             InitializeComponent();
+            if (verbindugenList.Count > 0)
+            {
+                string body = "";
+                foreach (var line in verbindugenList)
+                {
+                    if (body.Length > 0)
+                    {
+                        body += "\n";
+                    }
+                    body += "Ab:\t" + line.VerbindungAb + "\nAn:\t" + line.VerbindungAn + "\nDauer:\t" + line.VerbindungDauer + "\nGleis Ab:\t" + line.VerbindungGleisAb + "\nGleis An:\t" + line.VerbindungGleisAn + "\n";
+                }
+                txtMailBody.Text = body;
+            }
         }
 
         private void btnMailCancelClick(object sender, RoutedEventArgs e)
