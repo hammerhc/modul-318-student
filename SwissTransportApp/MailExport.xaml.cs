@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,6 +27,7 @@ namespace SwissTransportApp
             if (verbindugenList.Count > 0)
             {
                 string body = "";
+                txtMailSubject.Text = "Verbindungen";
                 foreach (var line in verbindugenList)
                 {
                     if (body.Length > 0)

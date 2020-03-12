@@ -81,6 +81,30 @@ namespace SwissTransport
             return null;
         }
 
+        public Connections GetConnectionsByTime(string fromStation, string toStation, string date, string time, bool timeType)
+        {
+            string type = "0";
+            if (timeType)
+            {
+                type = "1";
+            }
+            fromStation = System.Uri.EscapeDataString(fromStation);
+            toStation = System.Uri.EscapeDataString(toStation);
+            var request = CreateWebRequest("http://transport.opendata.ch/v1/connections?from=" + fromStation + "&to=" + toStation +"&date=" + date +"&time=" + time + "&isArrivalTime=" + type);
+            var response = request.GetResponse();
+            var responseStream = response.GetResponseStream();
+
+            if (responseStream != null)
+            {
+                var readToEnd = new StreamReader(responseStream).ReadToEnd();
+                var connections =
+                    JsonConvert.DeserializeObject<Connections>(readToEnd);
+                return connections;
+            }
+
+            return null;
+        }
+
         private static WebRequest CreateWebRequest(string url)
         {
             var request = WebRequest.Create(url);

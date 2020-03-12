@@ -39,6 +39,7 @@ namespace SwissTransportApp
             verbindungList.Clear();
             string verbindungenVon = "";
             string verbindungenNach = "";
+            bool verbindungenType = false;
             DateTime? verbindungenDatum = DateTime.Now;
             txtVerbindungenDate.Text = verbindungenDatum.ToString();
             string verbindungenZeit = DateTime.Now.ToString();
@@ -65,16 +66,42 @@ namespace SwissTransportApp
             }
             bool? verbindungenAb = radioBtnVerbindungenAb.IsChecked;
             bool? verbindungenAn = radioBtnVerbindungenAn.IsChecked;
+            if (verbindungenAn.Value)
+            {
+                verbindungenType = true;
+            }
 
             transportAPI = new Transport();
-            var test = transportAPI.GetConnections(verbindungenVon, verbindungenNach);
-            int id = 0;
-            foreach (var line in test.ConnectionList)
+            try
             {
-                verbindungList.Add(new Verbindungen { VerbindungId = id, VerbindungAb = line.From.Station.Name, VerbindungAn = line.To.Station.Name, VerbindungDauer = line.Duration, VerbindungGleisAb = line.From.Platform, VerbindungGleisAn = line.To.Platform });
-                id++;
+                var date = Convert.ToDateTime(txtVerbindungenDate.Text);
+                var year = date.Year;
+                var month = date.Month;
+                var day = date.Day;
+                var time = date.TimeOfDay;
+                var testDate = year + "-" + month + "-" + day;
+                var test = transportAPI.GetConnectionsByTime(verbindungenVon, verbindungenNach, testDate, time.ToString(), verbindungenType);
+                int id = 0;
+                string verbindungAn = "";
+                string verbindungAb = "";
+                DateTime dateTimeFrom;
+                DateTime dateTimeTo;
+                foreach (var line in test.ConnectionList)
+                {
+                    dateTimeFrom = UnixTimeStampToDateTime(Convert.ToDouble(line.From.DepartureTimestamp));
+                    dateTimeTo = UnixTimeStampToDateTime(Convert.ToDouble(line.To.ArrivalTimestamp));
+                    verbindungAb = line.From.Station.Name + ", " + dateTimeFrom.ToString();
+                    verbindungAn = line.To.Station.Name + ", " + dateTimeTo.ToString();
+                    verbindungList.Add(new Verbindungen { VerbindungId = id, VerbindungAb = verbindungAb, VerbindungAn = verbindungAn, VerbindungDauer = line.Duration, VerbindungGleisAb = line.From.Platform, VerbindungGleisAn = line.To.Platform });
+                    id++;
+                }
+                dataGridVerbindung.ItemsSource = verbindungList;
             }
-            dataGridVerbindung.ItemsSource = verbindungList;
+            catch
+            {
+                showError("Fehler bei der Abfrage der Verbindungen");
+            }
+
         }
 
         private void btnAbfahrtstafelSuchenClick(object sender, RoutedEventArgs e)
@@ -92,26 +119,33 @@ namespace SwissTransportApp
             }
 
             transportAPI = new Transport();
-            var test = transportAPI.GetStations(station);
-            string stationId = "";
-            foreach (var line in test.StationList)
+            try
             {
-                if (line.Name == station)
+                var test = transportAPI.GetStations(station);
+                string stationId = "";
+                foreach (var line in test.StationList)
                 {
-                    stationId = line.Id;
+                    if (line.Name == station)
+                    {
+                        stationId = line.Id;
+                    }
                 }
-            }
 
-            if (stationId.Length > 0)
-            {
-                var test2 = transportAPI.GetStationBoard(station, stationId);
-                int id = 0;
-                foreach (var line in test2.Entries)
+                if (stationId.Length > 0)
                 {
-                    abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = id, AbfahrtstafelAbfahrt = line.Stop.Departure.ToString(), AbfahrtstafelNach = line.To, AbfahrtstafelTyp = line.Name});
+                    var test2 = transportAPI.GetStationBoard(station, stationId);
+                    int id = 0;
+                    foreach (var line in test2.Entries)
+                    {
+                        abfahrtstafelList.Add(new Abfahrtstafel { AbfahrtstafelId = id, AbfahrtstafelAbfahrt = line.Stop.Departure.ToString(), AbfahrtstafelNach = line.To, AbfahrtstafelTyp = line.Name });
+                    }
                 }
+                dataGridAbfahrtstafel.ItemsSource = abfahrtstafelList;
             }
-            dataGridAbfahrtstafel.ItemsSource = abfahrtstafelList;
+            catch
+            {
+                showError("Fehler bei der Abfrage der Abfahrtstabelle");
+            }
         }
 
         private void btnStationenSuchenClick(object sender, RoutedEventArgs e)
@@ -128,27 +162,43 @@ namespace SwissTransportApp
             }
 
             transportAPI = new Transport();
-            var test = transportAPI.GetStations(station);
-            int id = 0;
-            foreach (var line in test.StationList)
+            try
             {
-                if (line.Icon == "train")
+                var test = transportAPI.GetStations(station);
+                int id = 0;
+                foreach (var line in test.StationList)
                 {
-                    line.Icon = "Zug";
+                    if (line.Icon == "train")
+                    {
+                        line.Icon = "Zug";
+                    }
+                    else if (line.Icon == "bus")
+                    {
+                        line.Icon = "Bus";
+                    }
+                    stationenList.Add(new Stationen { StationenId = id, StationenName = line.Name, StationenTyp = line.Icon, StationenMapURL = "https://www.google.com/maps/place/" + line.Coordinate.XCoordinate + "+" + line.Coordinate.YCoordinate });
                 }
-                else if (line.Icon == "bus")
-                {
-                    line.Icon = "Bus";
-                }
-                stationenList.Add(new Stationen { StationenId = id, StationenName = line.Name, StationenTyp = line.Icon, StationenMapURL = "https://www.google.com/maps/place/" + line.Coordinate.XCoordinate + "+" + line.Coordinate.YCoordinate});
+                dataGridStationen.ItemsSource = stationenList;
             }
-            dataGridStationen.ItemsSource = stationenList;
+            catch
+            {
+                showError("Fehler bei der Stationsabfrage");
+            }
+
         }
 
         private void btnMapOpenClick(object sender, RoutedEventArgs e)
         {
-            object URL = ((Button)sender).CommandParameter;
-            System.Diagnostics.Process.Start(URL.ToString());
+            try
+            {
+                object URL = ((Button)sender).CommandParameter;
+                System.Diagnostics.Process.Start(URL.ToString());
+            }
+            catch
+            {
+                showError("Map konnte nicht geöffnet werden");
+            }
+
         }
 
         private void btnLocationClick(object sender, RoutedEventArgs e)
@@ -197,19 +247,26 @@ namespace SwissTransportApp
                 combobox.Items.Clear();
                 combobox.Text = input;
                 transportAPI = new Transport();
-                var test = transportAPI.GetStations(combobox.Text);
-                foreach (var line in test.StationList)
+                try
                 {
-                    if (line.Id != null)
+                    var test = transportAPI.GetStations(combobox.Text);
+                    foreach (var line in test.StationList)
                     {
-                        combobox.Items.Add(line.Name);
+                        if (line.Id != null)
+                        {
+                            combobox.Items.Add(line.Name);
+                        }
+                    }
+                    var myTextBox = (combobox.Template.FindName("PART_EditableTextBox", combobox) as TextBox);
+                    if (myTextBox != null)
+                    {
+                        myTextBox.Focus();
+                        myTextBox.SelectionStart = myTextBox.Text.Length;
                     }
                 }
-                var myTextBox = (combobox.Template.FindName("PART_EditableTextBox", combobox) as TextBox);
-                if (myTextBox != null)
+                catch
                 {
-                    myTextBox.Focus();
-                    myTextBox.SelectionStart = myTextBox.Text.Length;
+                    showError("Fehler bei der Stationsabfrage");
                 }
             }
 
@@ -235,6 +292,13 @@ namespace SwissTransportApp
             {
                 showError("Es sind keine Verbindungen vorhanden");
             }
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
         }
 
         private void showError(string message)
