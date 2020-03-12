@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -34,44 +35,18 @@ namespace SwissTransportApp
 
         private void btnMailSendClick(object sender, RoutedEventArgs e)
         {
-            bool settingsStatus = checkSettings();
-            if (settingsStatus == true)
+            try
             {
                 if (txtMailTo.Text.Length > 0 && txtMailSubject.Text.Length > 0 && txtMailBody.Text.Length > 0)
                 {
-                    var smtpClient = new SmtpClient(txtSMTPHost.Text, Convert.ToInt32(txtSMTPPort.Text))
-                    {
-                        Credentials = new NetworkCredential(txtUsername.Text, txtPassword.Text),
-                        EnableSsl = true
-                    };
-                    try
-                    {
-                        smtpClient.Send(txtUsername.Text, txtMailTo.Text, txtMailSubject.Text, txtMailBody.Text);
-                        MessageBox.Show("E-Mail wurde erfolgreich gesendet");
-                        txtMailTo.Text = "";
-                        txtMailSubject.Text = "";
-                        txtMailBody.Text = "";
-                        txtMailTo.Focus();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("E-Mail wurde nicht gesendet");
-                    }
+                    string uri = "mailto:" + txtMailTo.Text + "?subject=" + txtMailSubject.Text + "&body=" + txtMailBody.Text;
+                    var process = Process.Start(uri);
                 }
             }
-        }
-
-        private bool checkSettings()
-        {
-            if (txtSMTPHost.Text.Length > 0 && txtSMTPPort.Text.Length > 0 && txtUsername.Text.Length > 0 && txtPassword.Text.Length > 0)
+            catch
             {
-                return true;
-            } 
-            else
-            {
-                return false;
+                MessageBox.Show("Fehler beim Mail-To");
             }
-            
         }
     }
 }

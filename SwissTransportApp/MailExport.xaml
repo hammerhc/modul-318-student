@@ -14,57 +14,29 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
-        <Label Style="{Binding Source={StaticResource title}}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="E-Mail-Export"/>
-        <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" TabStripPlacement="Left">
-            <TabItem Header="E-Mail">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="4*"/>
-                        <RowDefinition Height="1*"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Margin="50,0,0,0"  Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Label Padding="0" Content="An:" VerticalAlignment="Center" Width="50" Margin="0,0,5,0"/>
-                        <TextBox x:Name="txtMailTo" Width="200" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="1" Margin="50,0,0,0"  Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Label Padding="0" Content="Betreff:" VerticalAlignment="Center" Width="50" Margin="0,0,5,0"/>
-                        <TextBox x:Name="txtMailSubject" Width="200" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    </StackPanel>
-                    <DockPanel Grid.Row="2" Margin="50">
-                        <TextBox x:Name="txtMailBody"/>
-                    </DockPanel>
-                    <StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="10">
-                        <Button x:Name="btnMailCancel" Click="btnMailCancelClick"  Content="Abbrechen" Margin="5,0,5,0"/>
-                        <Button x:Name="btnMailSend" Click="btnMailSendClick" Content="E-Mail senden" Margin="5,0,5,0"/>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem Header="SMTP-Einstellungen">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                        <Label Content="SMTP-Host:" Width="100" Margin="5,0,5,0"/>
-                        <TextBox x:Name="txtSMTPHost" Width="200" VerticalAlignment="Center" Margin="5,0,5,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                        <Label Content="SMTP-Port:" Width="100" Margin="5,0,5,0"/>
-                        <TextBox x:Name="txtSMTPPort" Width="200" VerticalAlignment="Center" Text="587" Margin="5,0,5,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                        <Label Content="Benutzername:" Width="100" Margin="5,0,5,0"/>
-                        <TextBox x:Name="txtUsername" Width="200" VerticalAlignment="Center" Margin="5,0,5,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                        <Label Content="Passwort:" Width="100" Margin="5,0,5,0"/>
-                        <TextBox x:Name="txtPassword" Width="200" VerticalAlignment="Center" Margin="5,0,5,0"/>
-                    </StackPanel>
-                </StackPanel>
-            </TabItem>
-        </TabControl>
+        <Label Style="{Binding Source={StaticResource title}}" Grid.Row="0" Content="E-Mail-Export"/>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Margin="50,0,0,0"  Orientation="Horizontal" HorizontalAlignment="Left">
+                <Label Padding="0" Content="An:" VerticalAlignment="Center" Width="50" Margin="0,0,5,0"/>
+                <TextBox x:Name="txtMailTo" Width="200" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Margin="50,0,0,0"  Orientation="Horizontal" HorizontalAlignment="Left">
+                <Label Padding="0" Content="Betreff:" VerticalAlignment="Center" Width="50" Margin="0,0,5,0"/>
+                <TextBox x:Name="txtMailSubject" Width="200" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            </StackPanel>
+            <DockPanel Grid.Row="2" Margin="50">
+                <TextBox x:Name="txtMailBody"/>
+            </DockPanel>
+            <StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="10">
+                <Button x:Name="btnMailCancel" Click="btnMailCancelClick"  Content="Abbrechen" Margin="5,0,5,0"/>
+                <Button x:Name="btnMailSend" Click="btnMailSendClick" Content="Mail-To" Margin="5,0,5,0"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
